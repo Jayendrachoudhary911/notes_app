@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes Web App</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Google Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        body {
+    font-family: 'Nunito', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 4px -2px 20px 3px rgba(0, 0, 0, 0.062);
+    margin: 20px;
+    border-radius: 15px;
+}
+.font-size-selector {
+    margin-left: 10px;
+}
+.content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    position: relative;
+    margin: 0 20px 20px 20px;
+}
+
+.note-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0 0 20px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-weight: bolder;
+    cursor: pointer;
+    position: relative;
+}
+
+.note-item.active {
+    background-color: #e6e6e6;
+}
+
+.menu-icon {
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+    border-radius: 5px;
+    user-select: none;
+    transition: background 0.3s ease-in-out;
+}
+.menu-icon:hover{
+    background-color: #e6e6e6;
+}
+
+.note-item-menu {
+    display: none;
+    position: absolute;
+    right: -72px;
+    top: -72px;
+    flex-direction: column;
+    background-color: rgba(255, 255, 255, 0.151);
+    backdrop-filter: blur(60px);
+    box-shadow: 0 2px 20px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    z-index: 100;
+}
+
+.note-item.active .note-item-menu {
+    display: block;
+}
+
+.note-item-menu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.note-item-menu ul li {
+    padding: 10px;
+    cursor: pointer;
+    position: relative;
+    border-radius: 12px;
+}
+.note-item-menu ul li:last-child {
+    border-bottom: none;
+}
+
+.note-item-menu ul li:hover {
+    background-color: #d8d8d8c2;
+}
+
+.note-item-menu ul li .dropdown {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    background-color: white;
+    border: 1px solid #664646;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 200;
+    min-width: 100px;
+    padding: 10px;
+}
+
+.note-item-menu ul li:hover .dropdown {
+    display: block;
+    border-radius: 12px;
+}
+
+.new_note {
+    position: absolute;
+    bottom: 36px;
+    padding: 16px 86px;
+    font-weight: bolder;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #000000;
+    color: #ddd;
+    border: none;
+    border-radius: 10px;
+    box-shadow:  0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease-in-out;
+}
+.new_note:hover {
+    background-color: #ddd;
+    color: #000000;
+}
+.dropdown ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown ul li {
+    padding: 5px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+}
+
+.dropdown ul li:last-child {
+    border-bottom: none;
+}
+
+.dropdown ul li:hover {
+    background-color: #f0f0f0;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 8px 20px;
+    border-radius: 20px;
+}
+
+.auto-save {
+    font-size: 14px;
+    background-color: #deffdf;
+    padding: 10px 16px;
+    border-radius: 10px;
+    color: #4caf50;
+}
+
+.note-content {
+    margin-top: 20px;
+    background-color: #fff;
+    height: 75vh;
+    border-radius: 15px;
+    border: none;
+    padding: 15px;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    scrollbar-width: 6px;
+}
+
+.toolbar {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.toolbar button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.toolbar button:hover {
+    background-color: #f0f0f0;
+}
+
+.toolbar button.active {
+    background-color: #ddd;
+}
+
+textarea {
+    width: 100%;
+    height: 500px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: 'Nunito', sans-serif;
+}
+
+.link-preview {
+    margin-top: 20px;
+    width: 300px;
+    height: 250px;
+    padding: 10px;
+    border-radius: 15px;
+    display: none;
+    background-color: #fff;
+}
+
+.link-preview img {
+    max-width: 30%;
+    border-radius: 15px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.link-preview-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.context-menu {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    width: 150px;
+    background-color: #ffffff28;
+    backdrop-filter: blur(40px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    overflow: hidden;
+    font-size: 14px;
+}
+
+.context-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.context-menu ul li {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.context-menu ul li:last-child {
+    border-bottom: none;
+}
+.context-menu ul li:hover {
+    background-color: #f0f0f0;
+}
+
+.note-download-dropdown {
+    top: 78px;
+    right: 78px;
+    padding: 10px;
+    background-color: #ffffff28;
+    backdrop-filter: blur(40px);
+    border-radius: 15px;
+}
+.delete {
+    background-color: #ffeded;
+    color: #8f0f0f;
+    transition: background 0.3s ease-in-out;
+}
+.delete:hover {
+    background-color: #8f0f0f;
+    color: #ffeded;
+}
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>WiYou! Tech</h2>
+            <div id="notes-list"></div>
+            <button class="new_note" onclick="createNewNote()">+ New Note</button>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content">
+            <div class="top-bar">
+                <h2 id="note-title"></h2>
+                <span class="auto-save" id="auto-save" style="display: none;">Auto-saved</span>
+                <div class="toolbar">
+                    <button onclick="formatText('bold')"><span class="material-icons">format_bold</span></button>
+                    <button onclick="formatText('italic')"><span class="material-icons">format_italic</span></button>
+                    <button onclick="formatText('underline')"><span class="material-icons">format_underlined</span></button>
+                    <button onclick="formatText('strikeThrough')"><span class="material-icons">strikethrough_s</span></button>
+                    <button onclick="formatText('insertUnorderedList')"><span class="material-icons">format_list_bulleted</span></button>
+                    <button onclick="formatText('insertOrderedList')"><span class="material-icons">format_list_numbered</span></button>
+                    <button onclick="insertLink()"><span class="material-icons">link</span></button>
+                        <input type="file" id="fileInput" accept="image/*" />
+                        <input type="text" id="urlInput" placeholder="Enter image URL" />
+                        <button id="addUrlBtn">Add Image by URL</button>
+                    <button onclick="changeFont('Nunito')">Nunito</button>
+                    <button onclick="changeFont('Arial')">Arial</button>
+                    <button onclick="increaseFontSize()">A+</button>
+                    <button onclick="decreaseFontSize()">A-</button>
+                    <button onclick="showDownloadDropdown()">Download <span class="material-icons">arrow_drop_down</span></button>
+                    <div class="dropdown note-download-dropdown" style="display: none;">
+                        <ul>
+                            <li onclick="downloadNoteContent('doc')">.doc</li>
+                            <li onclick="downloadNoteContent('pdf')">.pdf</li>
+                            <li onclick="downloadNoteContent('html')">.html</li>
+                            <li onclick="downloadNoteContent('png')">.png</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="note-content" id="note-content" contenteditable="true" oninput="saveContent()"></div>
+            <div class="link-preview" id="link-preview">
+                <img id="link-image" src="" alt="">
+                <div class="link-preview-title" id="link-title"></div>
+                <div id="link-description"></div>
+            </div>
+        </div>
+
+        <!-- Context Menu -->
+        <div class="context-menu" id="context-menu">
+            <ul>
+                <li onclick="formatText('bold')">Bold</li>
+                <li onclick="formatText('italic')">Italic</li>
+                <li onclick="formatText('underline')">Underline</li>
+                <li onclick="insertLink()"><span class="material-icons">link</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="./scripting.js"></script>
+</body>
+
+</html>
